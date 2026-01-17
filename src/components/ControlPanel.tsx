@@ -11,28 +11,42 @@ export function ControlPanel() {
     const setValues = useShaderStore((s) => s.setValues)
     const currentValues = useShaderStore((s) => s.values)
 
+    const config = shaders[activeShader] || shaders['mesh-gradient']
+
     const schema = useMemo(() => {
-        const baseSchema = { ...shaders[activeShader].schema }
-        // Remove custom-handled props from Leva schema
-        if ('image' in baseSchema) {
-            delete (baseSchema as Record<string, unknown>).image
-        }
-        if ('colors' in baseSchema) {
-            delete (baseSchema as Record<string, unknown>).colors
-        }
-        return baseSchema
-    }, [activeShader])
+        // Hydrate schema with current values from store (which might be pasted values)
+        // We need a deep clone/merge to avoid mutating the static config and to ensure Leva picks up the new 'value'
+        const baseSchema: Record<string, any> = { ...config.schema }
+
+        // Create a new schema object where values are updated from the store
+        const hydratedSchema: Record<string, any> = {}
+
+        Object.keys(baseSchema).forEach(key => {
+            // Skip image and colors as they are custom handled
+            if (key === 'image' || key === 'colors') return
+
+            const item = baseSchema[key]
+            // If the store has a value for this prop, use it as the default for this fresh mount
+            if (currentValues[key] !== undefined) {
+                hydratedSchema[key] = { ...item, value: currentValues[key] }
+            } else {
+                hydratedSchema[key] = item
+            }
+        })
+
+        return hydratedSchema
+    }, [activeShader, config]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const levaValues = useControls(activeShader, schema, [activeShader])
 
     // Check for image prop
-    const hasImageProp = 'image' in shaders[activeShader].schema
-    const defaultImage = (shaders[activeShader].schema as Record<string, { value?: string }>).image?.value || ''
+    const hasImageProp = 'image' in config.schema
+    const defaultImage = (config.schema as Record<string, { value?: string }>).image?.value || ''
     const imageValue = (currentValues.image as string) ?? defaultImage
 
     // Check for colors prop
-    const hasColorsProp = 'colors' in shaders[activeShader].schema
-    const defaultColors = (shaders[activeShader].schema as Record<string, { value?: string[] }>).colors?.value || []
+    const hasColorsProp = 'colors' in config.schema
+    const defaultColors = (config.schema as Record<string, { value?: string[] }>).colors?.value || []
     const colorsValue = (currentValues.colors as string[]) ?? defaultColors
 
     // Keep track of latest custom values to avoid stale closures in useEffect

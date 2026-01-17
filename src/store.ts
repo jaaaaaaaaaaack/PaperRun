@@ -20,7 +20,7 @@ interface ShaderState {
     values: Record<string, unknown>
     canvasSize: CanvasSize
     canvasBg: CanvasBg
-    setActiveShader: (shader: string) => void
+    setActiveShader: (shader: string, initialValues?: Record<string, unknown>) => void
     setValues: (values: Record<string, unknown>) => void
     setCanvasSize: (size: CanvasSize) => void
     setCanvasBg: (bg: CanvasBg) => void
@@ -31,7 +31,7 @@ export const useShaderStore = create<ShaderState>((set) => ({
     values: {},
     canvasSize: sizePresets[2], // Desktop default
     canvasBg: 'checkered',
-    setActiveShader: (shader) => set({ activeShader: shader, values: {} }),
+    setActiveShader: (shader, initialValues = {}) => set({ activeShader: shader, values: initialValues }),
     setValues: (values) => set({ values }),
     setCanvasSize: (size) => set({ canvasSize: size }),
     setCanvasBg: (bg) => set({ canvasBg: bg }),

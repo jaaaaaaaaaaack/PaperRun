@@ -10,14 +10,17 @@ export function generateReactCode(shader: ShaderKey, values: Record<string, unkn
     const name = shaderNames[shader]
     const props = Object.entries(values)
         .map(([key, val]) => {
-            if (Array.isArray(val)) {
+            if (val === undefined || val === null) return ''
+            if (Array.isArray(val) || typeof val === 'object') {
                 return `  ${key}={${JSON.stringify(val)}}`
             }
             if (typeof val === 'string') {
-                return `  ${key}="${val}"`
+                // Use braces and JSON.stringify to handle quotes and escaping safely
+                return `  ${key}={${JSON.stringify(val)}}`
             }
             return `  ${key}={${val}}`
         })
+        .filter(Boolean)
         .join('\n')
 
     return `<${name}\n${props}\n/>`

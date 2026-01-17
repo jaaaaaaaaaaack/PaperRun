@@ -47,8 +47,51 @@ Do not include any other text or explanation, just the JSON array.`,
             throw new Error('No valid hex colors found in AI response')
         }
 
+
         return validColors.slice(0, 7)
     } catch {
         throw new Error('Could not parse gradient colors from AI response')
+    }
+}
+
+export async function parseShaderProps(code: string): Promise<Record<string, unknown>> {
+    if (!isGeminiConfigured()) {
+        throw new Error('Gemini API key not configured')
+    }
+
+    const ai = new GoogleGenAI({ apiKey })
+
+    const response = await ai.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: [
+            {
+                role: 'user',
+                parts: [
+                    {
+                        text: `Extract the React props from this code snippet as a JSON object.
+                        
+Code:
+${code.slice(0, 2000)}
+
+Return ONLY a valid JSON object where keys are prop names and values are the prop values.
+Example output: {"color": "#ff0000", "speed": 0.5}
+Do not include markdown formatting or explanations.`
+                    }
+                ]
+            }
+        ],
+    })
+
+    const text = response.text || ''
+    const match = text.match(/\{[\s\S]*\}/)
+
+    if (!match) {
+        throw new Error('Could not parse JSON from AI response')
+    }
+
+    try {
+        return JSON.parse(match[0])
+    } catch (e) {
+        throw new Error('Invalid JSON received from AI')
     }
 }

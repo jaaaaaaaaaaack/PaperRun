@@ -2,11 +2,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useShaderStore, sizePresets } from '../store'
 import type { CanvasBg } from '../store'
 
-const shaderOptions = [
-    { value: 'mesh-gradient', label: 'Mesh Gradient' },
-    { value: 'heatmap', label: 'Heatmap' },
-    { value: 'dithering', label: 'Dithering' },
-]
+import { shaders } from '../shaders'
+
+const formatLabel = (key: string) => {
+    return key
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+}
+
+const shaderOptions = Object.keys(shaders).map(key => ({
+    value: key,
+    label: formatLabel(key)
+}))
 
 const bgOptions: { value: CanvasBg; label: string }[] = [
     { value: 'checkered', label: '⬛ Checkered' },

@@ -1,5 +1,5 @@
 import { useControls, Leva } from 'leva'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { shaders } from '../shaders'
 import type { ShaderKey } from '../shaders'
 import { useShaderStore } from '../store'
@@ -25,20 +25,29 @@ export function ControlPanel() {
 
     const levaValues = useControls(activeShader, schema, [activeShader])
 
-    useEffect(() => {
-        // Merge Leva values with custom values (image, colors)
-        setValues({ ...currentValues, ...levaValues })
-    }, [levaValues, setValues])
-
     // Check for image prop
     const hasImageProp = 'image' in shaders[activeShader].schema
-    const imageValue = (currentValues.image as string) ||
-        (shaders[activeShader].schema as Record<string, { value?: string }>).image?.value || ''
+    const defaultImage = (shaders[activeShader].schema as Record<string, { value?: string }>).image?.value || ''
+    const imageValue = (currentValues.image as string) ?? defaultImage
 
     // Check for colors prop
     const hasColorsProp = 'colors' in shaders[activeShader].schema
-    const colorsValue = (currentValues.colors as string[]) ||
-        (shaders[activeShader].schema as Record<string, { value?: string[] }>).colors?.value || []
+    const defaultColors = (shaders[activeShader].schema as Record<string, { value?: string[] }>).colors?.value || []
+    const colorsValue = (currentValues.colors as string[]) ?? defaultColors
+
+    // Keep track of latest custom values to avoid stale closures in useEffect
+    // without causing infinite loops by adding currentValues to dependency array
+    const customValuesRef = useRef({ image: imageValue, colors: colorsValue })
+    customValuesRef.current = { image: imageValue, colors: colorsValue }
+
+    useEffect(() => {
+        // Merge Leva values with latest custom values
+        setValues({
+            ...levaValues,
+            image: customValuesRef.current.image,
+            colors: customValuesRef.current.colors
+        })
+    }, [levaValues, setValues])
 
     const handleImageChange = (newImage: string) => {
         setValues({ ...currentValues, ...levaValues, image: newImage })

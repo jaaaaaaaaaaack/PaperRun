@@ -26,7 +26,7 @@ export function Header({ activeShader, onShaderChange }: HeaderProps) {
     const setCanvasBg = useShaderStore((s) => s.setCanvasBg)
 
     return (
-        <header className="h-14 border-b border-neutral-800 flex items-center justify-between px-4 bg-neutral-950">
+        <header className="h-14 border-b border-neutral-800 flex items-center justify-between px-4 bg-neutral-950 relative z-50">
             <h1 className="font-semibold text-lg">Paper Shaders Playground</h1>
             <div className="flex items-center gap-2">
                 <Select

@@ -1,73 +1,51 @@
-# React + TypeScript + Vite
+# Paper Shaders Playground
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A visual configurator for exploring [Paper Shaders](https://shaders.paper.design/) with real-time Leva controls and instant code export.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **🎨 Live Shader Preview** — MeshGradient, Heatmap, Dithering with WebGL rendering
+- **🎛️ Leva Controls** — Adjust colors, distortion, speed, and more in real-time
+- **📋 Code Export** — Auto-generated React JSX with syntax highlighting
+- **📐 Canvas Presets** — Mobile, Tablet, Desktop, and Square size options
+- **🎭 Background Toggle** — Checkered, black, or white backdrop
 
-## React Compiler
+## Quick Start
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open http://localhost:5173/
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Tech Stack
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Vite + React 18 + TypeScript
+- Tailwind CSS v4
+- ShadCN/UI components
+- Leva control panel
+- Zustand state management
+- @paper-design/shaders-react
+
+## Project Structure
+
 ```
+src/
+├── components/     # UI components (Header, Canvas, ControlPanel, CodeExport)
+├── shaders/        # Shader configs with Leva schemas
+├── lib/            # Utilities (code-generator)
+├── store.ts        # Zustand store
+└── App.tsx         # Main layout
+```
+
+## Adding Shaders
+
+1. Create `src/shaders/[name].ts` with component + Leva schema
+2. Register in `src/shaders/index.ts`
+3. Add dropdown option in `Header.tsx`
+4. Add name mapping in `lib/code-generator.ts`
+
+## License
+
+MIT

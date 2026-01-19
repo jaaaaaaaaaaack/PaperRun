@@ -7,7 +7,7 @@ export const colorPanelsConfig = {
     },
     schema: {
         colors: {
-            value: ["#cc3333", "#cc9933", "#99cc33", "#33cc33", "#33cc99", "#3399cc", "#3333cc"],
+            value: ["#FFC391", "#E491FF", "#6270C8", "#133B94"],
         },
         colorBack: { value: '#000000' },
         density: { value: 3, min: 1, max: 10, step: 1 },

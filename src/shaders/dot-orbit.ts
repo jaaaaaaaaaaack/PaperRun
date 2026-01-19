@@ -7,7 +7,7 @@ export const dotOrbitConfig = {
     },
     schema: {
         colors: {
-            value: ["#cc3333", "#cc9933", "#99cc33", "#33cc33", "#33cc99"],
+            value: ["#FFC391", "#E491FF", "#6270C8", "#133B94"],
         },
         colorBack: { value: '#000000' },
         stepsPerColor: { value: 4, min: 1, max: 10, step: 1 },

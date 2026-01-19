@@ -22,9 +22,9 @@ export async function extractGradientFromImage(base64Image: string): Promise<str
                     mimeType: 'image/jpeg',
                 },
             },
-            `Analyze this image and extract up to 7 dominant colors that would make a beautiful gradient.
+            `Analyze this image and extract up to 7 dominant colors that would make a beautiful gradient. Beautiful does not mean generic or "safe".
 Return ONLY a JSON array of hex color codes, like: ["#ff0000", "#00ff00", "#0000ff"]
-Order the colors from darkest to lightest, or in a way that creates a smooth gradient flow.
+Order the colorsin a way that represents the image's aesthetic as a gradient flow. It must have between 2 and 7 colors.
 Do not include any other text or explanation, just the JSON array.`,
         ],
     })

@@ -1,7 +1,66 @@
+import type { ShaderKey } from '../shaders'
 
 interface ParsedResult {
     componentName: string | null
     props: Record<string, unknown>
+}
+
+// Reverse mapping from component name to shader key
+const componentNameToShaderKey: Record<string, ShaderKey> = {
+    'MeshGradient': 'mesh-gradient',
+    'StaticMeshGradient': 'static-mesh-gradient',
+    'StaticRadialGradient': 'static-radial-gradient',
+    'GrainGradient': 'grain-gradient',
+    'ColorPanels': 'color-panels',
+    'SimplexNoise': 'simplex-noise',
+    'PerlinNoise': 'perlin-noise',
+    'NeuroNoise': 'neuro-noise',
+    'Voronoi': 'voronoi',
+    'Metaballs': 'metaballs',
+    'Warp': 'warp',
+    'Swirl': 'swirl',
+    'DotOrbit': 'dot-orbit',
+    'DotGrid': 'dot-grid',
+    'Waves': 'waves',
+    'Spiral': 'spiral',
+    'SmokeRing': 'smoke-ring',
+    'GodRays': 'god-rays',
+    'Water': 'water',
+    'LiquidMetal': 'liquid-metal',
+    'ImageDithering': 'image-dithering',
+    'HalftoneDots': 'halftone-dots',
+    'HalftoneCMYK': 'halftone-cmyk',
+    'PaperTexture': 'paper-texture',
+    'FlutedGlass': 'fluted-glass',
+    'PulsingBorder': 'pulsing-border',
+    'Heatmap': 'heatmap',
+    'Dithering': 'dithering',
+}
+
+export interface ParsedShaderCode {
+    shader: ShaderKey
+    values: Record<string, unknown>
+}
+
+/**
+ * Parse JSX shader code and extract shader key and values
+ */
+export function parseShaderCode(code: string): ParsedShaderCode | null {
+    const parsed = parseReactComponent(code)
+
+    if (!parsed.componentName) {
+        return null
+    }
+
+    const shaderKey = componentNameToShaderKey[parsed.componentName]
+    if (!shaderKey) {
+        return null
+    }
+
+    return {
+        shader: shaderKey,
+        values: parsed.props
+    }
 }
 
 export function parseReactComponent(code: string): ParsedResult {

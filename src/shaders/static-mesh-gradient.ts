@@ -7,7 +7,7 @@ export const staticMeshGradientConfig = {
     },
     schema: {
         colors: {
-            value: ["#cc3333", "#cc9933", "#99cc33", "#33cc33"],
+            value: ["#FFC391", "#E491FF", "#6270C8", "#133B94"],
         },
         positions: { value: 2, min: 1, max: 10, step: 0.1 },
         waveX: { value: 1, min: 0, max: 2, step: 0.01 },

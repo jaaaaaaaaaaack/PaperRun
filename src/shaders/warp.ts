@@ -7,7 +7,7 @@ export const warpConfig = {
     },
     schema: {
         colors: {
-            value: ["#cc3333", "#cc9933", "#99cc33", "#33cc33"],
+            value: ["#FFC391", "#E491FF", "#6270C8", "#133B94"],
         },
         proportion: { value: 0.45, min: 0, max: 1, step: 0.01 },
         softness: { value: 1, min: 0, max: 2, step: 0.01 }, // range assumption, usually 0-1 but example says 1

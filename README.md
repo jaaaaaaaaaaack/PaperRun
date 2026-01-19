@@ -1,50 +1,166 @@
-# Paper Shaders Playground
+# PaperRun
 
-A visual configurator for exploring [Paper Shaders](https://shaders.paper.design/) with real-time Leva controls and instant code export.
+A visual playground for exploring and customizing [paper-shaders](https://www.npmjs.com/package/paper-shaders) - beautiful WebGL shader components for React.
 
 ## Features
 
-- **🎨 Live Shader Preview** — MeshGradient, Heatmap, Dithering with WebGL rendering
-- **🎛️ Leva Controls** — Adjust colors, distortion, speed, and more in real-time
-- **📋 Code Export** — Auto-generated React JSX with syntax highlighting
-- **📐 Canvas Presets** — Mobile, Tablet, Desktop, and Square size options
-- **🎭 Background Toggle** — Checkered, black, or white backdrop
+- **14+ Shader Effects** - Mesh gradients, metaballs, noise patterns, and more
+- **Real-time Preview** - See changes instantly as you adjust parameters
+- **Preset System** - Save and load custom shader configurations
+- **Image Library** - Upload and manage images for image-based shaders
+- **AI Gradient Extraction** - Drop an image to extract gradient colors using Gemini AI
+- **Code Export** - Copy React component code with your customizations
+- **Code Import** - Paste shader code to load configurations
 
-## Quick Start
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm or pnpm
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/your-username/PaperRun.git
+cd PaperRun
+
+# Install dependencies
 npm install
+
+# Start development server
 npm run dev
 ```
 
-Open http://localhost:5173/
+The app will be available at `http://localhost:5173`
 
-## Tech Stack
+### Environment Variables
 
-- Vite + React 18 + TypeScript
-- Tailwind CSS v4
-- ShadCN/UI components
-- Leva control panel
-- Zustand state management
-- @paper-design/shaders-react
+Create a `.env` file in the project root:
 
-## Project Structure
+```env
+# Optional: Gemini API Key for AI gradient extraction
+# Get your key from https://aistudio.google.com/apikey
+VITE_GEMINI_API_KEY=your-api-key-here
+```
+
+The Gemini API key is optional - the app works without it, but AI gradient extraction from images will be disabled.
+
+## Available Shaders
+
+| Shader | Description |
+|--------|-------------|
+| Mesh Gradient | Animated flowing mesh gradient |
+| Static Mesh Gradient | Non-animated mesh gradient |
+| Static Radial Gradient | Radial gradient with customizable colors |
+| Grain Gradient | Gradient with film grain texture |
+| Color Panels | Animated color panel transitions |
+| Simplex Noise | Organic noise patterns |
+| Perlin Noise | Classic Perlin noise visualization |
+| Neuro Noise | Neural network-inspired patterns |
+| Voronoi | Voronoi cell patterns |
+| Metaballs | Animated blob-like shapes |
+| Warp | Image warping effect |
+| Swirl | Swirling animation effect |
+| Dot Orbit | Orbiting dot patterns |
+| God Rays | Volumetric light rays |
+| Heatmap | Heat map visualization |
+| Liquid Metal | Metallic reflection effect |
+
+## Usage
+
+### Adjusting Shaders
+
+1. **Select a Shader** - Click the shader selector at the top to browse available shaders
+2. **Customize Properties** - Use the sliders to adjust shader parameters
+3. **Change Colors** - Click color swatches to open the color picker
+4. **Edit Gradients** - Click the gradient bar to modify gradient colors
+
+### Working with Images
+
+Some shaders (Warp, Swirl, Liquid Metal, etc.) accept images:
+
+1. **Upload Image** - Click the dropzone or drag & drop an image
+2. **Use Library** - Click the library tile to select from saved images
+3. **Save to Library** - Uploaded images are automatically saved
+
+### Presets
+
+- **Save Preset** - Click the `+` button in the presets carousel
+- **Load Preset** - Click any preset thumbnail to apply it
+- **Presets persist** - Saved using IndexedDB in your browser
+
+### Code Export
+
+The CODE section shows the React component code for your current configuration:
+
+```tsx
+<MeshGradient
+  colors={["#FFC391", "#E491FF", "#6270C8", "#133B94"]}
+  distortion={0.8}
+  swirl={0.1}
+  speed={1}
+/>
+```
+
+- **Copy code** - Click "Copy code" to copy to clipboard
+- **Paste** - Click "Paste" to import shader code from clipboard
+
+## Development
+
+### Project Structure
 
 ```
 src/
-├── components/     # UI components (Header, Canvas, ControlPanel, CodeExport)
-├── shaders/        # Shader configs with Leva schemas
-├── lib/            # Utilities (code-generator)
-├── store.ts        # Zustand store
-└── App.tsx         # Main layout
+├── components/         # React components
+│   ├── Canvas.tsx     # Main shader preview
+│   ├── Sidebar.tsx    # Control panel
+│   ├── controls/      # Slider, color picker components
+│   └── ...
+├── shaders/           # Shader configurations
+├── lib/               # Utilities
+│   ├── db.ts          # IndexedDB for persistence
+│   ├── gemini.ts      # AI gradient extraction
+│   └── ...
+└── store.ts           # Zustand state management
 ```
 
-## Adding Shaders
+### Tech Stack
 
-1. Create `src/shaders/[name].ts` with component + Leva schema
-2. Register in `src/shaders/index.ts`
-3. Add dropdown option in `Header.tsx`
-4. Add name mapping in `lib/code-generator.ts`
+- **React 19** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool
+- **Tailwind CSS 4** - Styling
+- **DaisyUI** - UI components
+- **Zustand** - State management
+- **Framer Motion** - Animations
+- **paper-shaders** - WebGL shader components
+
+### Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run preview  # Preview production build
+npm run lint     # Run ESLint
+```
+
+## Deployment
+
+### Vercel
+
+1. Push to GitHub
+2. Import project in Vercel
+3. Add environment variables if using AI features
+4. Deploy
+
+### Manual Build
+
+```bash
+npm run build
+# Output in dist/ folder
+```
 
 ## License
 

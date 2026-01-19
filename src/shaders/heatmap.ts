@@ -5,7 +5,7 @@ export const heatmapConfig = {
     schema: {
         image: { value: 'https://shaders.paper.design/images/logos/diamond.svg' },
         colors: {
-            value: ['#cc3333', '#cc9933', '#99cc33', '#33cc33', '#33cc99', '#3399cc', '#3333cc'],
+            value: ['#FFC391', '#E491FF', '#6270C8', '#133B94'],
         },
         colorBack: { value: '#000000' },
         contour: { value: 0.5, min: 0, max: 1, step: 0.01 },

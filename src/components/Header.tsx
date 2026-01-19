@@ -1,81 +1,70 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useShaderStore, sizePresets } from '../store'
 import type { CanvasBg } from '../store'
 
-import { shaders } from '../shaders'
-
-const formatLabel = (key: string) => {
-    return key
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')
-}
-
-const shaderOptions = Object.keys(shaders).map(key => ({
-    value: key,
-    label: formatLabel(key)
-}))
-
 const bgOptions: { value: CanvasBg; label: string }[] = [
-    { value: 'checkered', label: '⬛ Checkered' },
-    { value: 'black', label: '⬛ Black' },
-    { value: 'white', label: '⬜ White' },
+    { value: 'checkered', label: 'Checkered' },
+    { value: 'black', label: 'Black' },
+    { value: 'white', label: 'White' },
 ]
 
-interface HeaderProps {
-    activeShader: string
-    onShaderChange: (value: string) => void
-}
-
-export function Header({ activeShader, onShaderChange }: HeaderProps) {
+export function Header() {
     const canvasSize = useShaderStore((s) => s.canvasSize)
     const setCanvasSize = useShaderStore((s) => s.setCanvasSize)
     const canvasBg = useShaderStore((s) => s.canvasBg)
     const setCanvasBg = useShaderStore((s) => s.setCanvasBg)
+    const view = useShaderStore((s) => s.view)
+    const setView = useShaderStore((s) => s.setView)
 
     return (
-        <header className="h-14 border-b border-neutral-800 flex items-center justify-between px-4 bg-neutral-950 relative z-50">
-            <h1 className="font-semibold text-lg">Paper Shaders Playground</h1>
+        <header className="h-14 flex items-center justify-between px-3 relative z-50">
             <div className="flex items-center gap-2">
-                <Select
-                    value={canvasSize.label}
-                    onValueChange={(label) => {
-                        const preset = sizePresets.find(p => p.label === label)
-                        if (preset) setCanvasSize(preset)
-                    }}
-                >
-                    <SelectTrigger className="w-28">
-                        <SelectValue placeholder="Size" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {sizePresets.map((p) => (
-                            <SelectItem key={p.label} value={p.label}>{p.label}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-
-                <Select value={canvasBg} onValueChange={(v) => setCanvasBg(v as CanvasBg)}>
-                    <SelectTrigger className="w-32">
-                        <SelectValue placeholder="Background" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {bgOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-
-                <Select value={activeShader} onValueChange={onShaderChange}>
-                    <SelectTrigger className="w-40">
-                        <SelectValue placeholder="Select shader" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {shaderOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                {/* View toggle tabs */}
+                <div role="tablist" className="tabs tabs-box bg-surface-alt">
+                    <button
+                        role="tab"
+                        className={`tab tab-sm ${view === 'playground' ? 'tab-active' : ''}`}
+                        onClick={() => setView('playground')}
+                    >
+                        Playground
+                    </button>
+                    <button
+                        role="tab"
+                        className={`tab tab-sm ${view === 'experiments' ? 'tab-active' : ''}`}
+                        onClick={() => setView('experiments')}
+                    >
+                        Experiments
+                    </button>
+                </div>
             </div>
+
+            {view === 'playground' && (
+                <div className="flex items-center gap-2">
+                    {/* Canvas size */}
+                    <select
+                        value={canvasSize.label}
+                        onChange={(e) => {
+                            const preset = sizePresets.find(p => p.label === e.target.value)
+                            if (preset) setCanvasSize(preset)
+                        }}
+                        className="select select-sm bg-surface-alt border-none text-text-secondary text-sm min-h-0 h-8"
+                    >
+                        {sizePresets.map((p) => (
+                            <option key={p.label} value={p.label}>{p.label}</option>
+                        ))}
+                    </select>
+
+                    {/* Canvas background */}
+                    <select
+                        value={canvasBg}
+                        onChange={(e) => setCanvasBg(e.target.value as CanvasBg)}
+                        className="select select-sm bg-surface-alt border-none text-text-secondary text-sm min-h-0 h-8"
+                    >
+                        {bgOptions.map((opt) => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                    </select>
+                </div>
+            )}
         </header>
     )
 }

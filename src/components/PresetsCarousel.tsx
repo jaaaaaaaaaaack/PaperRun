@@ -21,7 +21,7 @@ export function PresetsCarousel({ onSavePreset, isSaving }: PresetsCarouselProps
                     <button
                         onClick={onSavePreset}
                         disabled={isSaving}
-                        className="snap-start shrink-0 w-[80px] h-[60px] rounded-lg border-2 border-dashed border-border-subtle bg-surface-alt/50 hover:border-text-secondary hover:bg-surface-alt transition-colors focus:outline-none focus:ring-2 focus:ring-info flex items-center justify-center disabled:opacity-50 disabled:cursor-wait"
+                        className="snap-start shrink-0 w-[70px] h-[60px] rounded-lg border-2 border-dashed border-border-subtle bg-surface-alt/50 hover:border-text-secondary hover:bg-surface-alt transition-colors focus:outline-none focus:ring-2 focus:ring-info flex items-center justify-center disabled:opacity-50 disabled:cursor-wait"
                         title="Save current settings as preset"
                     >
                         <Plus className="w-6 h-6 text-text-secondary" />

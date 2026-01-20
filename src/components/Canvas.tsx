@@ -32,7 +32,7 @@ export function Canvas() {
 
     return (
         <div
-            className={`flex-1 flex items-center justify-center overflow-auto ${bgStyles[canvasBg]}`}
+            className={`flex-1 flex items-center justify-center rounded-2xl overflow-auto ${bgStyles[canvasBg]}`}
             onClick={closeAllSidebars}
         >
             <div

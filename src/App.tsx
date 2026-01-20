@@ -13,7 +13,7 @@ export default function App() {
   }, [loadPresets, loadLibraryImages])
 
   return (
-    <div className="h-screen flex bg-base-100 text-base-content p-3 gap-3">
+    <div className="h-screen flex bg-base-100 text-base-content p-3 gap-1">
       <Sidebar />
       <Canvas />
     </div>

@@ -2,7 +2,9 @@
 @import "tw-animate-css";
 @plugin "daisyui";
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
@@ -61,7 +63,9 @@ html, body, #root {
     font-family: var(--font-sans);
   }
 
-  code, pre, .font-mono {
+  code,
+  pre,
+  .font-mono {
     font-family: var(--font-mono);
   }
 }
@@ -73,31 +77,31 @@ html, body, #root {
 
 /* Custom colors for range slider */
 .range::-webkit-slider-runnable-track {
-  background: linear-gradient(
-    to right,
-    theme('colors.slate.400') 0%,
-    theme('colors.slate.400') var(--value-percent, 50%),
-    theme('colors.slate.600') var(--value-percent, 50%),
-    theme('colors.slate.600') 100%
-  );
+  background: linear-gradient(to right,
+      #94a3b8 0%,
+      #94a3b8 var(--value-percent, 50%),
+      #475569 var(--value-percent, 50%),
+      #475569 100%) !important;
 }
 
 .range::-webkit-slider-thumb {
-  background: theme('colors.slate.800');
-  border: 2px solid theme('colors.slate.400');
+  background: #1e293b;
+  border: 4px solid #94a3b8;
+  box-shadow: 0 0 0 0 transparent !important;
 }
 
 .range::-moz-range-track {
-  background: theme('colors.slate.600');
+  background: #475569;
 }
 
 .range::-moz-range-progress {
-  background: theme('colors.slate.400');
+  background: #94a3b8;
 }
 
 .range::-moz-range-thumb {
-  background: theme('colors.slate.800');
-  border: 2px solid theme('colors.slate.400');
+  background: #1e293b;
+  border: 4px solid #94a3b8;
+  box-shadow: 0 0 0 0 transparent !important;
 }
 
 /* Scrollbar hide utility */
@@ -153,7 +157,7 @@ html, body, #root {
 .gradient-popover .color-picker-panel-ribbon-handler,
 .color-popover .color-picker-panel-ribbon-handler {
   border: 3px solid white !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
   width: 20px !important;
   height: 20px !important;
   top: -2px !important;
@@ -197,12 +201,12 @@ html, body, #root {
 /* Gradient stop markers */
 .gradient-popover .gradient-marker {
   border: 2px solid white !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .gradient-popover .gradient-stop-marker {
   border: 2px solid white !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Hide color presets in popovers */
@@ -210,4 +214,3 @@ html, body, #root {
 .color-popover .default-color-panel {
   display: none;
 }
-

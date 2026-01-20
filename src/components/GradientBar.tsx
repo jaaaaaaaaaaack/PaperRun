@@ -1,12 +1,15 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import ReactGPicker from 'react-gcolor-picker'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
+import { ColorPicker } from 'antd'
+import type { ColorPickerProps } from 'antd'
 
 interface GradientBarProps {
     colors: string[]
     onChange: (colors: string[]) => void
 }
 
-// Convert hex colors array to CSS gradient string with positions
+type AntGradientStop = { color: string; percent: number }
+
+// Convert hex colors array to CSS gradient string for preview
 function colorsToGradient(colors: string[]): string {
     if (colors.length === 0) return 'linear-gradient(90deg, #000000 0%, #ffffff 100%)'
     if (colors.length === 1) return `linear-gradient(90deg, ${colors[0]} 0%, ${colors[0]} 100%)`
@@ -18,101 +21,112 @@ function colorsToGradient(colors: string[]): string {
     return `linear-gradient(90deg, ${stops.join(', ')})`
 }
 
-// Parse CSS gradient string to extract hex colors
-function gradientToColors(gradient: string): string[] {
-    const hexRegex = /#[0-9a-fA-F]{6}/g
-    const hexMatches = gradient.match(hexRegex)
-    if (hexMatches && hexMatches.length >= 1) {
-        return hexMatches
+// Convert hex colors array to Ant Design gradient format
+function colorsToAntGradient(colors: string[]): AntGradientStop[] {
+    if (colors.length === 0) {
+        return [
+            { color: '#000000', percent: 0 },
+            { color: '#ffffff', percent: 100 }
+        ]
     }
-
-    const rgbaRegex = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/g
-    const colors: string[] = []
-    let match
-    while ((match = rgbaRegex.exec(gradient)) !== null) {
-        const r = parseInt(match[1])
-        const g = parseInt(match[2])
-        const b = parseInt(match[3])
-        const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
-        colors.push(hex)
+    if (colors.length === 1) {
+        return [
+            { color: colors[0], percent: 0 },
+            { color: colors[0], percent: 100 }
+        ]
     }
+    return colors.map((color, index) => ({
+        color,
+        percent: Math.round((index / (colors.length - 1)) * 100)
+    }))
+}
 
-    return colors.length > 0 ? colors : ['#000000', '#ffffff']
+// Convert internal gradient state to CSS for preview
+function gradientStopsToCSS(stops: AntGradientStop[]): string {
+    if (stops.length === 0) return 'linear-gradient(90deg, #000000 0%, #ffffff 100%)'
+    if (stops.length === 1) return `linear-gradient(90deg, ${stops[0].color} 0%, ${stops[0].color} 100%)`
+
+    const cssStops = stops
+        .slice()
+        .sort((a, b) => a.percent - b.percent)
+        .map(stop => `${stop.color} ${stop.percent}%`)
+    return `linear-gradient(90deg, ${cssStops.join(', ')})`
+}
+
+// Normalize colors for comparison (lowercase, sorted)
+function normalizeColorsForComparison(colors: string[]): string {
+    return colors.map(c => c.toLowerCase()).sort().join(',')
 }
 
 export function GradientBar({ colors, onChange }: GradientBarProps) {
-    const [isOpen, setIsOpen] = useState(false)
-    const popoverRef = useRef<HTMLDivElement>(null)
-    const barRef = useRef<HTMLButtonElement>(null)
+    // Internal state preserves full gradient structure (colors + positions)
+    const [internalGradient, setInternalGradient] = useState<AntGradientStop[]>(() =>
+        colorsToAntGradient(colors)
+    )
 
-    const gradientValue = useMemo(() => colorsToGradient(colors), [colors])
+    // Track if we're currently making internal changes
+    const isInternalChange = useRef(false)
+    // Track the last colors we synced from props
+    const lastExternalColors = useRef(normalizeColorsForComparison(colors))
 
-    const handleGradientChange = useCallback((newValue: string) => {
-        if (newValue.includes('gradient')) {
-            const newColors = gradientToColors(newValue)
-            if (newColors.length > 0 && JSON.stringify(newColors) !== JSON.stringify(colors)) {
-                onChange(newColors)
-            }
-        }
-    }, [colors, onChange])
-
-    // Close popover when clicking outside
+    // Sync internal state when parent colors change EXTERNALLY (e.g., AI extraction)
     useEffect(() => {
-        if (!isOpen) return
+        const normalizedProps = normalizeColorsForComparison(colors)
 
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                popoverRef.current &&
-                !popoverRef.current.contains(event.target as Node) &&
-                barRef.current &&
-                !barRef.current.contains(event.target as Node)
-            ) {
-                setIsOpen(false)
-            }
+        // Only reset if this is a genuinely external change (not from our own onChange)
+        if (!isInternalChange.current && normalizedProps !== lastExternalColors.current) {
+            setInternalGradient(colorsToAntGradient(colors))
+            lastExternalColors.current = normalizedProps
         }
+        isInternalChange.current = false
+    }, [colors])
 
-        document.addEventListener('mousedown', handleClickOutside)
-        return () => document.removeEventListener('mousedown', handleClickOutside)
-    }, [isOpen])
+    const handleGradientChange: ColorPickerProps['onChange'] = useCallback((value) => {
+        const gradientColors = (value as any).colors
+        if (Array.isArray(gradientColors) && gradientColors.length > 0) {
+            // Extract full gradient state (color + percent)
+            const newGradient: AntGradientStop[] = gradientColors.map((stop: any) => {
+                const colorObj = stop.color
+                let hex = typeof colorObj === 'string' ? colorObj : colorObj?.toHexString?.() || '#000000'
+                if (typeof hex === 'string' && hex.length === 9) {
+                    hex = hex.slice(0, 7)
+                }
+                return { color: hex, percent: stop.percent }
+            })
+
+            // Update internal state (preserves positions)
+            setInternalGradient(newGradient)
+
+            // Mark that the next prop change is from us
+            isInternalChange.current = true
+
+            // Notify parent with just hex colors (sorted by position)
+            const sortedColors = newGradient
+                .slice()
+                .sort((a, b) => a.percent - b.percent)
+                .map(s => s.color)
+
+            // Update our tracking ref
+            lastExternalColors.current = normalizeColorsForComparison(sortedColors)
+
+            onChange(sortedColors)
+        }
+    }, [onChange])
+
+    // Use internal gradient for the picker value
+    const gradientPreview = useMemo(() => gradientStopsToCSS(internalGradient), [internalGradient])
 
     return (
-        <div className="relative">
-            {/* Gradient Bar Preview */}
+        <ColorPicker
+            value={internalGradient}
+            onChange={handleGradientChange}
+            mode="gradient"
+            disabledAlpha
+        >
             <button
-                ref={barRef}
-                onClick={() => setIsOpen(!isOpen)}
                 className="w-full h-10 rounded-xl cursor-pointer transition-all hover:ring-2 hover:ring-slate-400 focus:outline-none focus:ring-2 focus:ring-info"
-                style={{ background: gradientValue }}
+                style={{ background: gradientPreview }}
             />
-
-            {/* Popover */}
-            {isOpen && (
-                <div
-                    ref={popoverRef}
-                    className="absolute top-full left-0 mt-2 z-50 gradient-popover"
-                >
-                    <div className="bg-white rounded-2xl shadow-2xl p-4 border border-slate-200">
-                        <ReactGPicker
-                            value={gradientValue}
-                            onChange={handleGradientChange}
-                            format="hex"
-                            gradient={true}
-                            solid={false}
-                            showAlpha={true}
-                            debounce={true}
-                            debounceMS={50}
-                            popupWidth={320}
-                            colorBoardHeight={180}
-                            showGradientResult={false}
-                            showGradientMode={false}
-                            showGradientAngle={false}
-                            showGradientPosition={false}
-                            allowAddGradientStops={true}
-                            showInputs={true}
-                        />
-                    </div>
-                </div>
-            )}
-        </div>
+        </ColorPicker>
     )
 }

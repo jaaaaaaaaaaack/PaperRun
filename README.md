@@ -1,5 +1,7 @@
 # PaperRun
 
+A personal project.
+
 A visual playground for exploring and customizing [paper-shaders](https://www.npmjs.com/package/paper-shaders) - beautiful WebGL shader components for React.
 
 ## Features
